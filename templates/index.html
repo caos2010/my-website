@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Chatbot Tính BMI</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      max-width: 500px; 
+      margin: 40px auto; 
+    }
+    #chatbox { 
+      border: 1px solid #ccc; 
+      width: 100%; 
+      height: 400px; 
+      overflow-y: scroll; 
+      padding: 10px; 
+    }
+    #user-input { 
+      width: 80%; 
+      padding: 5px; 
+    }
+    #send-btn { 
+      padding: 5px 10px; 
+    }
+    .bot { 
+      color: green; 
+      margin: 5px 0; 
+    }
+    .user { 
+      color: blue; 
+      margin: 5px 0; 
+      text-align: right; 
+    }
+  </style>
+</head>
+<body>
+  <h1>🤖 Chatbot Tính BMI</h1>
+  <div id="chatbox"></div>
+  <input type="text" id="user-input" placeholder="Nhập cân nặng & chiều cao...">
+  <button id="send-btn">Gửi</button>
+
+  <script>
+    const chatbox = document.getElementById('chatbox');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+
+    function addMessage(text, sender) {
+      const msg = document.createElement('div');
+      msg.className = sender;
+      msg.textContent = text;
+      chatbox.appendChild(msg);
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const text = userInput.value.trim();
+      if (!text) return;
+
+      addMessage("👤 Bạn: " + text, 'user');
+      userInput.value = '';
+
+      const response = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text })
+      });
+
+      const data = await response.json();
+      addMessage("🤖 Bot: " + data.reply, 'bot');
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    userInput.addEventListener('keypress', e => { 
+      if (e.key === 'Enter') sendMessage(); 
+    });
+
+    addMessage("🤖 Bot: Xin chào! Hãy nhập cân nặng (kg) & chiều cao (cm). VD: 70 170", 'bot');
+  </script>
+</body>
+</html>
