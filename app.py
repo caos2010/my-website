@@ -4,10 +4,12 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
+# Trang chủ
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('index.html')  # Phải có templates/index.html
 
+# Route xử lý chat BMI
 @app.route('/chat', methods=['POST'])
 def chat():
     data = request.json
@@ -37,12 +39,12 @@ def chat():
             f"💡 Tình trạng: {status}\n"
             f"{risk}"
         )
-
     except:
         reply = "❌ Vui lòng nhập đúng: [cân nặng] [chiều cao] (VD: 70 170)"
 
     return jsonify({"reply": reply})
 
+# Không cần app.run() nếu chạy gunicorn
+# Nếu chạy local thì mới cần
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
-    app.run(debug=True, port=8000)
+    app.run(debug=True)
